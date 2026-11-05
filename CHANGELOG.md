@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.3.0] - 2026-11-05
+
+Transparent and frosted-glass menus, a toolbar you can tune on its own, and a Transparent swatch in every background colour picker, ported from upstream Autumn Note 3.2.0–3.3.0 and fitted to this fork: native-button swatches, dark-theme tokens and its own select styling. No breaking changes; every new token defaults to today's look.
+
 ### Added
 
 - **Transparent menus and a "Transparent" swatch** (ported from upstream Autumn Note 3.2.0, `1e0a115`). Every menu and popup reads `--an-menu-bg`, `--an-menu-border`, `--an-menu-shadow` and `--an-menu-backdrop`, so `themeVars: { 'menu-bg': 'transparent' }` or a translucent colour with `'menu-backdrop': 'blur(10px)'` restyles all of them at once. The highlight, cell-background and border colour pickers gain a checkerboard **Transparent** swatch. In this fork the swatch stays a native `<button>` (reachable with Tab, fires on Enter and Space), and the dark-theme fallbacks stay on this fork's tokens (`--an-bg-raised`, `--an-border-strong`), so the default look does not change. The label is translated into all nine languages, Indonesian (`Transparan`) included.

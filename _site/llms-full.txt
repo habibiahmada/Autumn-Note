@@ -1,6 +1,6 @@
 # autumnnote-plus
 
-> Rich text with zero dependencies. autumnnote-plus is a WYSIWYG rich-text editor in plain JavaScript (ES2022+): no jQuery, no runtime packages and no `document.execCommand`. Every command is the editor's own DOM transform, so Chrome, Firefox and Safari produce the same markup. One `npm install`, one `create()` call, about 95 KiB gzip for every feature and 46 KiB with the minimal build. MIT licensed. Current version: 4.2.0.
+> Rich text with zero dependencies. autumnnote-plus is a WYSIWYG rich-text editor in plain JavaScript (ES2022+): no jQuery, no runtime packages and no `document.execCommand`. Every command is the editor's own DOM transform, so Chrome, Firefox and Safari produce the same markup. One `npm install`, one `create()` call, about 95 KiB gzip for every feature and 46 KiB with the minimal build. MIT licensed. Current version: 4.3.0.
 
 autumnnote-plus is the editor to reach for when a project needs a real document editor (headings, lists, tables, images, video, code blocks, Markdown) without pulling in a framework, a dependency tree or a paid licence. It drops into a plain HTML page through a script tag, into any bundler as an ES module, and into React and Vue 3 through official wrappers. TypeScript types ship in the package.
 
@@ -87,7 +87,7 @@ Other UI languages: in ES, `import { id } from 'autumnnote-plus/i18n/id'` and `A
 
 ---
 
-# Full reference (autumnnote-plus 4.2.0)
+# Full reference (autumnnote-plus 4.3.0)
 
 ## Features
 
@@ -794,6 +794,16 @@ Every colour, radius and font the editor uses is a CSS custom property with a bu
 | `--an-font-family` / `--an-font-size` / `--an-line-height` | system UI / `14px` / `1.6` | Editor UI typography |
 | `--an-focus-color` | `--an-primary` | Focus ring (also the `focusColor` option) |
 | `--an-z-offset` | `0` | Added to floating z-indexes (also the `zIndexOffset` option) |
+| `--an-menu-bg` | `--an-bg` (dark: `--an-bg-raised`) | Background of every menu and popup: toolbar dropdowns and colour pickers, the lists of `<select>` controls (see below), context menu, bubble toolbar, tooltips and their popovers, mention and slash menus, dialogs, the image-crop toolbar. Accepts `transparent` or a translucent colour |
+| `--an-menu-opacity` | `100%` | How opaque those surfaces are, `0%`–`100%`: each mixes its own background colour (light or dark) with transparent. Ignored when `--an-menu-bg` is set; browsers without `color-mix()` stay opaque |
+| `--an-toolbar-bg` | `--an-bg-toolbar` | The editor toolbar ("menu bar") has its own set, separate from the menus': this replaces its background outright |
+| `--an-toolbar-opacity` | `100%` | How opaque the toolbar is, `0%`–`100%`, in light and dark themes; most useful with `stickyToolbar`, where content scrolls under it |
+| `--an-toolbar-backdrop` | `none` | The toolbar's `backdrop-filter`, e.g. `blur(10px)` to frost what shows through it |
+| `--an-toolbar-border` | `--an-border` | The line under the toolbar; `transparent` hides it |
+| `--an-toolbar-shadow` | `0 2px 8px …` | The sticky toolbar's shadow; `none` removes it |
+| `--an-menu-border` | `--an-border` (dialogs: none) | Border colour of the same surfaces. `transparent` hides it without changing their size |
+| `--an-menu-shadow` | per surface | Their drop shadow; `none` removes it |
+| `--an-menu-backdrop` | `none` | Their `backdrop-filter`, e.g. `blur(10px)` for frosted glass behind a translucent `--an-menu-bg` |
 
 The dark theme sets the tokens above to its own palette, and adds these for the surfaces and accents only it uses:
 
@@ -827,6 +837,46 @@ const editor = AutumnNote.create('#editor', {
 editor.updateOptions({ themeVars: null });          // drop all overrides
 editor.updateOptions({ themeVars: { primary: '#10b981' } });
 ```
+
+Transparent and frosted-glass menus are a `themeVars` setting, so they apply to every menu at once:
+
+```js
+// Frosted glass
+AutumnNote.create('#editor', {
+  themeVars: {
+    'menu-bg': 'rgba(255, 255, 255, 0.72)',
+    'menu-border': 'rgba(255, 255, 255, 0.4)',
+    'menu-backdrop': 'blur(10px) saturate(1.4)',
+  },
+});
+
+// 40% transparent, in light and dark themes alike
+AutumnNote.create('#editor', {
+  themeVars: { 'menu-opacity': '60%' },
+});
+
+// A frosted sticky toolbar, set separately from the menus
+AutumnNote.create('#editor', {
+  stickyToolbar: true,
+  themeVars: {
+    'toolbar-opacity': '55%', 'toolbar-backdrop': 'blur(10px)', 'toolbar-border': 'transparent',
+    'menu-opacity': '85%', 'menu-backdrop': 'blur(14px)',
+  },
+});
+
+// Fully transparent, borderless menus
+AutumnNote.create('#editor', {
+  themeVars: { 'menu-bg': 'transparent', 'menu-border': 'transparent', 'menu-shadow': 'none' },
+});
+```
+
+To derive a translucent colour from the editor's own tokens, give each `var()` a fallback — in the light theme `--an-bg` and `--an-border` are not defined, so a bare `var(--an-bg)` makes the whole value invalid and the menu falls back to opaque:
+
+```js
+themeVars: { 'menu-bg': 'color-mix(in srgb, var(--an-bg, #ffffff) 62%, transparent)' }
+```
+
+The dropdown lists of `<select>` controls — the toolbar's Style, Font, Size and Line, the code block's language, the icon dialog's options — follow the same tokens in browsers with customizable selects (`appearance: base-select`, Chromium 135+). Each control is pinned to the width it would have natively, so the toolbar does not shift as the value changes. Other browsers draw the list themselves, natively and opaque; the control looks the same either way.
 
 Each editor mounts its dialogs, tooltips and menus in its own portal element (`.an-portal`), which carries the editor's theme class and `themeVars`. Use `popupContainer` to put that portal somewhere other than `document.body`.
 
