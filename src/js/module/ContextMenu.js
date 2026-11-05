@@ -1,7 +1,7 @@
 ﻿// ContextMenu.js - Right-click context menu for editor actions
 import { createElement, on, portalOf, setIcon, svgIcon } from '../core/dom.js';
 import { sanitiseHTML } from '../core/sanitise.js';
-import { resolvePalette } from '../core/palette.js';
+import { resolvePalette, TRANSPARENT } from '../core/palette.js';
 import { copySelection, cutSelection } from '../core/clipboard.js';
 import * as Style from '../editing/Style.js';
 import { insertHTMLNative, insertTextNative } from '../editing/insert.js';
@@ -38,7 +38,6 @@ const ICONS = {
   // Color
   textColor:      svgIcon(PATHS.foreColor, 14),
   highlightColor: svgIcon(PATHS.highlight, 14),
-  noColor:        `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>`,
   back:           svgIcon(`<polyline points="15 18 9 12 15 6"/>`, 14),
 };
 
@@ -245,14 +244,16 @@ export class ContextMenu {
           palette.appendChild(sw);
         });
         if (it.colorType === 'hiliteColor') {
+          // Transparent background, shown as a checkerboard. Text colour has no
+          // such swatch: transparent text is invisible, not "no colour".
+          const label = this.context.locale.contextMenu.transparent || 'Transparent';
           const noColor = createElement('button', {
             type: 'button',
-            class: 'an-context-color-swatch an-context-color-none',
-            title: this.context.locale.contextMenu.noHighlight || 'No highlight',
-            'aria-label': this.context.locale.contextMenu.noHighlight || 'No highlight',
+            class: 'an-context-color-swatch an-context-color-none an-swatch-transparent',
+            title: label,
+            'aria-label': label,
           });
-          setIcon(noColor, ICONS.noColor);
-          const offNo = on(noColor, 'click', (e) => { e.stopPropagation(); this._applyColor('hiliteColor', 'transparent'); });
+          const offNo = on(noColor, 'click', (e) => { e.stopPropagation(); this._applyColor('hiliteColor', TRANSPARENT); });
           this._menuDisposers.push(offNo);
           palette.appendChild(noColor);
         }
