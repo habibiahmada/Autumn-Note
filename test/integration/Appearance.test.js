@@ -196,3 +196,39 @@ describe('other runtime options', () => {
     editor.destroy();
   });
 });
+
+describe('toolbar <select> widths with customizable selects', () => {
+  const realCSS = globalThis.CSS;
+  const realRect = HTMLSelectElement.prototype.getBoundingClientRect;
+
+  afterEach(() => {
+    globalThis.CSS = realCSS;
+    HTMLSelectElement.prototype.getBoundingClientRect = realRect;
+  });
+
+  it('pins every toolbar select to its native width while create() runs', () => {
+    globalThis.CSS = { supports: (p, v) => p === 'appearance' && v === 'base-select' };
+    // The native look (measured under .an-select--measure) is as wide as the
+    // widest option; base-select would only fit the selected one.
+    HTMLSelectElement.prototype.getBoundingClientRect = function () {
+      return { width: this.classList.contains('an-select--measure') ? 96.4 : 40 };
+    };
+    const editor = makeEditor();
+    const selects = [...editor.layoutInfo.toolbar.querySelectorAll('select')];
+    expect(selects.length).toBeGreaterThan(0);
+    // Synchronous: no frame where the toolbar shows the content-sized width.
+    // This fork stores the width in em so it follows the font size.
+    for (const s of selects) {
+      const fs = Number.parseFloat(getComputedStyle(s).fontSize) || 12;
+      expect(s.style.width).toBe(`${Math.ceil((96.4 / fs) * 100) / 100}em`);
+    }
+    editor.destroy();
+  });
+
+  it('leaves selects alone where base-select is unsupported', () => {
+    globalThis.CSS = { supports: () => false };
+    const editor = makeEditor();
+    for (const s of editor.layoutInfo.toolbar.querySelectorAll('select')) expect(s.style.width).toBe('');
+    editor.destroy();
+  });
+});

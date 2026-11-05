@@ -1974,7 +1974,13 @@
 }
 
 .an-crop-toolbar {
-  // Inline styles handle position; add a subtle entrance animation.
+  // Inline styles handle position and layout. The surface itself is always the
+  // dark crop chrome, whatever the editor theme, but reads the --an-menu-*
+  // tokens like every other menu.
+  @include an-menu-bg(#1e1e2e);
+  border: 1px solid var(--an-menu-border, transparent);
+  box-shadow: var(--an-menu-shadow, 0 4px 16px rgba(0, 0, 0, 0.4));
+  backdrop-filter: var(--an-menu-backdrop, none);
   animation: an-crop-toolbar-in 0.12s ease;
 }
 
@@ -2492,7 +2498,7 @@ $an-video-accent: #8b5cf6; // violet-500
 // picker. A base-select sizes to its selected option rather than its widest,
 // so Toolbar locks each toolbar select to its native width (see
 // lockSelectWidth in core/dom.js) and the toolbar does not jump as the value
-// changes.
+// changes. The list reads the --an-menu-* tokens like every other menu.
 @supports (appearance: base-select) {
   .an-select,
   .an-code-lang-select,
@@ -2511,11 +2517,15 @@ $an-video-accent: #8b5cf6; // violet-500
       min-width: anchor-size(width);
       max-height: min(320px, 60vh);
       overflow-y: auto;
-      border: 1px solid var(--an-border, #{$an-border});
+      border: 1px solid var(--an-menu-border, var(--an-border, #{$an-border}));
       border-radius: var(--an-radius, #{$an-radius});
-      background: var(--an-bg-raised, var(--an-bg, #{$an-bg}));
+      // Same --an-menu-* tokens as every other menu, so the list turns
+      // transparent, frosted or opacity-adjusted with them. --an-bg-raised
+      // carries the dark theme, so no separate dark rule is needed.
+      @include an-menu-bg(var(--an-bg-raised, var(--an-bg, #{$an-bg})));
+      backdrop-filter: var(--an-menu-backdrop, none);
       color: var(--an-text, #{$an-text});
-      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: var(--an-menu-shadow, 0 12px 32px -8px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.08));
       scrollbar-width: thin;
     }
 
