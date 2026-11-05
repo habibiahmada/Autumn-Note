@@ -12,7 +12,7 @@
  */
 
 import { on, portalOf, setIcon } from '../core/dom.js';
-import { resolvePalette } from '../core/palette.js';
+import { resolvePalette, paintSwatch, TRANSPARENT } from '../core/palette.js';
 import * as Style from '../editing/Style.js';
 import { resolveIcon } from './Buttons.js';
 import { PATHS } from '../core/icon-paths.js';
@@ -220,18 +220,19 @@ export class BubbleToolbar {
       palette.appendChild(sw);
     });
 
-    // "No highlight" swatch — only shown for hiliteColor
+    // "Transparent" swatch (checkerboard) — only shown for hiliteColor, since
+    // transparent text would be invisible. A real <button>, so it is reachable
+    // with Tab and fires on Enter/Space without extra key handling.
     const CL = this.context.locale?.contextMenu;
-    const noHighlight = CL?.noHighlight || 'No highlight';
+    const transparentLabel = CL?.transparent || 'Transparent';
     const noColorBtn = document.createElement('button');
     noColorBtn.type = 'button';
-    noColorBtn.className = 'an-context-color-swatch an-context-color-none';
-    noColorBtn.title = noHighlight;
-    noColorBtn.setAttribute('aria-label', noHighlight);
-    setIcon(noColorBtn, `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg>`);
+    noColorBtn.className = 'an-context-color-swatch an-context-color-none an-swatch-transparent';
+    noColorBtn.title = transparentLabel;
+    noColorBtn.setAttribute('aria-label', transparentLabel);
     noColorBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      this._applyColor('hiliteColor', 'transparent');
+      this._applyColor('hiliteColor', TRANSPARENT);
     });
 
     // Custom color input row
@@ -326,7 +327,7 @@ export class BubbleToolbar {
     const name = type === 'hiliteColor' ? 'hiliteColor' : 'foreColor';
     const btn = this._el?.querySelector(`[data-name="${name}"]`);
     const strip = btn?.querySelector('.an-bubble-color-strip');
-    if (strip) /** @type {HTMLElement} */ (strip).style.background = color === 'transparent' ? 'transparent' : color;
+    if (strip) paintSwatch(/** @type {HTMLElement} */ (strip), color);
 
     this._closeColorPicker();
     this._syncActive();

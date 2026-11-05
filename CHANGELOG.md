@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.3.0] - 2026-11-05
+
+Transparent and frosted-glass menus, a toolbar you can tune on its own, and a Transparent swatch in every background colour picker, ported from upstream Autumn Note 3.2.0–3.3.0 and fitted to this fork: native-button swatches, dark-theme tokens and its own select styling. No breaking changes; every new token defaults to today's look.
+
+### Added
+
+- **Transparent menus and a "Transparent" swatch** (ported from upstream Autumn Note 3.2.0, `1e0a115`). Every menu and popup reads `--an-menu-bg`, `--an-menu-border`, `--an-menu-shadow` and `--an-menu-backdrop`, so `themeVars: { 'menu-bg': 'transparent' }` or a translucent colour with `'menu-backdrop': 'blur(10px)'` restyles all of them at once. The highlight, cell-background and border colour pickers gain a checkerboard **Transparent** swatch. In this fork the swatch stays a native `<button>` (reachable with Tab, fires on Enter and Space), and the dark-theme fallbacks stay on this fork's tokens (`--an-bg-raised`, `--an-border-strong`), so the default look does not change. The label is translated into all nine languages, Indonesian (`Transparan`) included.
+- **Adjustable menu opacity: `--an-menu-opacity`** (from upstream 3.3.0, `fdeedfe`). `0%`–`100%` (default `100%`) mixes each menu's own background, light or dark, with transparent where `color-mix()` is supported; it is ignored when `--an-menu-bg` is set. The `-webkit-backdrop-filter` prefix now comes from the build (Lightning CSS adds it from `browserslist`), because writing both with `var()` values let the minifier drop the unprefixed one.
+- **Adjustable toolbar transparency** (from upstream 3.3.0, `1ce0465`). `--an-toolbar-opacity` makes the toolbar translucent and `--an-toolbar-backdrop` blurs what shows through it, such as content scrolling under a sticky toolbar.
+- **Frosted glass for every menu** (from upstream 3.3.0, `a5e3cac`). `--an-menu-backdrop` (for example `blur(10px)`) reaches every menu, popover, tooltip and dialog, the image-crop toolbar now reads the same tokens (its look moved from inline styles to the stylesheet, default unchanged), and the styled `<select>` lists read them too. This fork keeps its own select styling and width locking (`lockSelectWidth`, sized in `em`); upstream's parallel implementation of the same feature is not ported.
+- **The toolbar and the menus are configured separately** (from upstream 3.3.0, `8b1d863`). The toolbar has its own set, `--an-toolbar-bg`, `--an-toolbar-opacity`, `--an-toolbar-backdrop`, `--an-toolbar-border` and `--an-toolbar-shadow`, and no `--an-menu-*` token reaches it, so a frosted sticky toolbar and translucent menus can be tuned independently.
+
+### Fixed
+
+- **The table cell-background swatches are real buttons.** They were `<div>`s without a role, so Tab skipped them and Enter or Space did nothing. Each is now a `<button>` named by its colour, like the toolbar's and context menu's swatches; the new Transparent swatches follow the same rule.
+
 ## [4.2.0] - 2026-10-21
 
 A context menu that stays clear of the text you are typing and fits on a phone, a toolbar that shows when it scrolls, and docs for using the editor from a CDN, from other frameworks and with a server. No breaking changes: options, events and the API are the same as 4.1.0.

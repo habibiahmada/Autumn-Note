@@ -178,8 +178,13 @@ describe('colour picker popup keyboard support', () => {
     swatches.forEach((sw) => {
       expect(sw.tagName).toBe('BUTTON');
       expect(sw.getAttribute('type')).toBe('button');
-      expect(sw.getAttribute('aria-label')).toBe(sw.getAttribute('data-color'));
-      expect(sw.getAttribute('title')).toBe(sw.getAttribute('data-color'));
+      // A colour swatch is named by its value; the "Transparent" swatch by its
+      // localised name, since its value (`transparent`) is not a useful label.
+      const name = sw.classList.contains('an-swatch-transparent')
+        ? (ctx.locale?.toolbar?.transparent || 'Transparent')
+        : sw.getAttribute('data-color');
+      expect(sw.getAttribute('aria-label')).toBe(name);
+      expect(sw.getAttribute('title')).toBe(name);
     });
   });
 
