@@ -1,5 +1,6 @@
 import { compile } from 'sass';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 
 // Every floating surface — menus, popovers, tooltips, dialogs — must read its
 // background, border, shadow and backdrop from the --an-menu-* tokens, so a
@@ -13,10 +14,19 @@ const SURFACES = [
 
 const css = compile(resolve(__dirname, '..', '..', 'src/styles/autumnnote.scss')).css;
 
-/** The declarations of the top-level `.cls {…}` rule. */
+/**
+ * The declarations of every top-level `.cls {…}` block, joined: Sass splits a
+ * rule into several blocks around the nested @supports of `an-menu-bg`.
+ */
 function rule(cls) {
-  const m = css.match(new RegExp(String.raw`(?:^|\n)\.${cls} \{([^}]*)\}`));
-  return m ? m[1] : null;
+  const blocks = [...css.matchAll(new RegExp(String.raw`(?:^|\n)\.${cls} \{([^}]*)\}`, 'g'))];
+  return blocks.length ? blocks.map((m) => m[1]).join('\n') : null;
+}
+
+/** The declarations of `.cls {…}` inside the color-mix @supports block. */
+function supportsRule(cls) {
+  const re = new RegExp(String.raw`@supports \(color: color-mix\(in srgb, red 50%, transparent\)\) \{\s*\.${cls} \{([^}]*)\}`);
+  return css.match(re)?.[1] ?? null;
 }
 
 describe('menu surface tokens', () => {
@@ -27,6 +37,20 @@ describe('menu surface tokens', () => {
     expect(body).toMatch(/border: 1px solid var\(--an-menu-border,/);
     expect(body).toMatch(/box-shadow: var\(--an-menu-shadow,/);
     expect(body).toMatch(/backdrop-filter: var\(--an-menu-backdrop, none\)/);
+  });
+
+  it.each(SURFACES)('.%s mixes its background with --an-menu-opacity where color-mix() exists', (cls) => {
+    const body = supportsRule(cls);
+    expect(body, `.${cls} has no @supports color-mix block`).not.toBeNull();
+    expect(body).toMatch(/background: var\(--an-menu-bg, color-mix\(in srgb, .+ var\(--an-menu-opacity, 100%\), transparent\)\)/);
+  });
+
+  it('leaves the -webkit- prefix to the build', () => {
+    // Writing both backdrop-filter and -webkit-backdrop-filter with var()
+    // values made the CSS minifier drop the unprefixed one, so Chromium and
+    // Firefox never blurred. The build adds the prefix itself.
+    const scss = readFileSync(resolve(__dirname, '..', '..', 'src/styles/autumnnote.scss'), 'utf8');
+    expect(scss).not.toMatch(/-webkit-backdrop-filter/);
   });
 
   it('dark-theme surface colours stay overridable by --an-menu-bg', () => {

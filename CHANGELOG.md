@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Transparent menus and a "Transparent" swatch** (ported from upstream Autumn Note 3.2.0, `1e0a115`). Every menu and popup reads `--an-menu-bg`, `--an-menu-border`, `--an-menu-shadow` and `--an-menu-backdrop`, so `themeVars: { 'menu-bg': 'transparent' }` or a translucent colour with `'menu-backdrop': 'blur(10px)'` restyles all of them at once. The highlight, cell-background and border colour pickers gain a checkerboard **Transparent** swatch. In this fork the swatch stays a native `<button>` (reachable with Tab, fires on Enter and Space), and the dark-theme fallbacks stay on this fork's tokens (`--an-bg-raised`, `--an-border-strong`), so the default look does not change. The label is translated into all nine languages, Indonesian (`Transparan`) included.
+- **Adjustable menu opacity: `--an-menu-opacity`** (from upstream 3.3.0, `fdeedfe`). `0%`–`100%` (default `100%`) mixes each menu's own background, light or dark, with transparent where `color-mix()` is supported; it is ignored when `--an-menu-bg` is set. The `-webkit-backdrop-filter` prefix now comes from the build (Lightning CSS adds it from `browserslist`), because writing both with `var()` values let the minifier drop the unprefixed one.
 
 ## [4.2.0] - 2026-10-21
 
