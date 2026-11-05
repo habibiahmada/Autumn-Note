@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Frosted glass for every menu** (from upstream 3.3.0, `a5e3cac`). `--an-menu-backdrop` (for example `blur(10px)`) reaches every menu, popover, tooltip and dialog, the image-crop toolbar now reads the same tokens (its look moved from inline styles to the stylesheet, default unchanged), and the styled `<select>` lists read them too. This fork keeps its own select styling and width locking (`lockSelectWidth`, sized in `em`); upstream's parallel implementation of the same feature is not ported.
 - **The toolbar and the menus are configured separately** (from upstream 3.3.0, `8b1d863`). The toolbar has its own set, `--an-toolbar-bg`, `--an-toolbar-opacity`, `--an-toolbar-backdrop`, `--an-toolbar-border` and `--an-toolbar-shadow`, and no `--an-menu-*` token reaches it, so a frosted sticky toolbar and translucent menus can be tuned independently.
 
+### Fixed
+
+- **The table cell-background swatches are real buttons.** They were `<div>`s without a role, so Tab skipped them and Enter or Space did nothing. Each is now a `<button>` named by its colour, like the toolbar's and context menu's swatches; the new Transparent swatches follow the same rule.
+
 ## [4.2.0] - 2026-10-21
 
 A context menu that stays clear of the text you are typing and fits on a phone, a toolbar that shows when it scrolls, and docs for using the editor from a CDN, from other frameworks and with a server. No breaking changes: options, events and the API are the same as 4.1.0.

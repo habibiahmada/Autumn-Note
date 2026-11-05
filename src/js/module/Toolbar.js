@@ -475,7 +475,8 @@ export class Toolbar {
     // by default: transparent text is invisible, not "no colour".
     if (def.transparent ?? def.name !== 'foreColor') {
       const label = this.context.locale.toolbar.transparent || 'Transparent';
-      const sw = createElement('div', {
+      const sw = createElement('button', {
+        type: 'button',
         class: 'an-color-swatch an-swatch-transparent',
         title: label,
         'aria-label': label,

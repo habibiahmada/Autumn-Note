@@ -1114,7 +1114,8 @@ export class TableTooltip {
     // 24-color palette — reuse existing CSS classes
     const palette = createElement('div', { class: 'an-context-color-palette' });
     SHADE_PRESETS.forEach((color) => {
-      const sw = createElement('div', { class: 'an-context-color-swatch', title: color });
+      // Native buttons: reachable with Tab and pressed with Enter/Space.
+      const sw = createElement('button', { type: 'button', class: 'an-context-color-swatch', title: color, 'aria-label': color });
       sw.style.background = color;
       this._disposers.push(on(sw, 'click', (e) => {
         e.stopPropagation();
@@ -1125,10 +1126,10 @@ export class TableTooltip {
     // "Transparent" swatch: an explicit see-through colour, unlike the reset
     // row below, which removes the inline colour so the stylesheet's applies.
     const clearLabel = this.context.locale.tooltips.table.transparent || 'Transparent';
-    const clearSw = createElement('div', {
+    const clearSw = createElement('button', {
+      type: 'button',
       class: 'an-context-color-swatch an-swatch-transparent',
       title: clearLabel,
-      role: 'button',
       'aria-label': clearLabel,
     });
     this._disposers.push(on(clearSw, 'click', (e) => {
