@@ -52,6 +52,7 @@ export const id = {
     chooseTextColor: 'Pilih warna teks',
     chooseHighlightColor: 'Pilih warna sorotan',
     customColor: 'Warna khusus',
+    transparent: 'Transparan',
     insertTableLabel: 'Sisipkan Tabel',
     paragraphItems: {
       blockquote: 'Kutipan',
@@ -241,6 +242,7 @@ export const id = {
     table:         'Sisipkan Tabel',
     back:          'Kembali',
     noHighlight:   'Tanpa sorotan',
+    transparent: 'Transparan',
     customColor:   'Warna khusus',
     customColorLabel: 'Khusus…',
   },
@@ -325,6 +327,7 @@ export const id = {
       cellBackground:     'Latar Sel',
       noShading:          'Tanpa Arsiran',
       noBorderColor:      'Tanpa Warna Garis',
+      transparent: 'Transparan',
       columnWidthPx:      'Lebar Kolom (px)',
       rowHeightPx:        'Tinggi Baris (px)',
       tableBorderWidthPx: 'Tebal Garis Tabel (px)',

@@ -589,6 +589,7 @@ describe('BubbleToolbar color picker interactions', () => {
 
     const picker = openPicker(bt, 'hiliteColor');
     const noColor = picker?.querySelector('.an-context-color-none');
+    expect(noColor.classList.contains('an-swatch-transparent')).toBe(true);
     if (noColor) {
       noColor.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(ctx.invoke).toHaveBeenCalledWith('editor.afterCommand');
@@ -834,8 +835,8 @@ describe('BubbleToolbar accessibility', () => {
     expect(bold.getAttribute('aria-pressed')).toBe('true');
   });
 
-  it('renders colour swatches as named buttons with localised "No highlight"', () => {
-    const ctx = { ...makeContext(), locale: { contextMenu: { noHighlight: 'Sin resaltado', customColor: 'Color personalizado', customColorLabel: 'Personalizado…' } } };
+  it('renders colour swatches as named buttons with a localised "Transparent" swatch', () => {
+    const ctx = { ...makeContext(), locale: { contextMenu: { transparent: 'Transparente', customColor: 'Color personalizado', customColorLabel: 'Personalizado…' } } };
     const bt = new BubbleToolbar(ctx);
     bt.initialize();
     const picker = /** @type {any} */ (bt._picker);
@@ -848,8 +849,8 @@ describe('BubbleToolbar accessibility', () => {
     });
     const none = picker._noColorBtn;
     expect(none.tagName).toBe('BUTTON');
-    expect(none.getAttribute('aria-label')).toBe('Sin resaltado');
-    expect(none.title).toBe('Sin resaltado');
+    expect(none.getAttribute('aria-label')).toBe('Transparente');
+    expect(none.title).toBe('Transparente');
     expect(picker._colorInput.getAttribute('aria-label')).toBe('Color personalizado');
     expect(bt._picker.querySelector('.an-context-color-custom span').textContent).toBe('Personalizado…');
     bt.destroy();
